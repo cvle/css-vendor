@@ -33,6 +33,11 @@ test('unknown property', function (assert) {
 
 QUnit.module('value support')
 
+test('transition with keyword \'all\'', function (assert) {
+  var value = cssVendor.supportedValue('transition', 'all 200ms linear')
+  assert.equal(value, 'all 200ms linear')
+})
+
 test('known value', function (assert) {
   var value = cssVendor.supportedValue('display', 'none')
   assert.equal(value, 'none')

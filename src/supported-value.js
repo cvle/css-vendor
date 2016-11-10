@@ -2,9 +2,19 @@ import isInBrowser from 'is-in-browser'
 import prefix from './prefix'
 
 const cache = {}
+const allRegExp = /^all/
 let el
 
 if (isInBrowser) el = document.createElement('p')
+
+function getStyleProperty(property, value) {
+  const computed = el.style[property]
+  // In IE & Edge { transition: "all 200ms linear" } becomes { transition: "200ms linear" }.
+  if (property === 'transition' && allRegExp.test(value) && !allRegExp.test(computed)) {
+    return `all ${computed}`
+  }
+  return computed
+}
 
 /**
  * Returns prefixed value if needed. Returns `false` if value is not supported.
@@ -37,7 +47,7 @@ export default function supportedValue(property, value) {
   }
 
   // Value is supported as it is.
-  if (el.style[property] === value) {
+  if (getStyleProperty(property, value) === value) {
     cache[cacheKey] = value
   }
   else {
