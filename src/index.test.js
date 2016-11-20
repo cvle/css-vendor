@@ -1,6 +1,11 @@
+/* eslint-disable func-names, no-console */
+
 import expect from 'expect.js'
 
 import {prefix, supportedProperty, supportedValue} from './index'
+import {getSupport, browserId, browserVersion} from '../test/utils'
+
+console.log(`Detected browser: ${browserId} ${browserVersion}`)
 
 describe('css-vendor', () => {
   describe('.prefix', () => {
@@ -22,11 +27,11 @@ describe('css-vendor', () => {
       expect(supportedProperty('display')).to.be('display')
     })
 
-    it('should prefix if needed', () => {
-      const prop = supportedProperty(`${prefix.css}animation`)
-      if (prop !== 'animation') {
-        expect(prop).to.be(`${prefix.css}animation`)
-      }
+    it('should prefix if needed', function () {
+      const support = getSupport('transforms2d')
+      if (!support.full && !support.partial) this.skip()
+      const prop = support.needPrefix ? `${prefix.css}transform` : 'transform'
+      expect(supportedProperty('transform')).to.be(prop)
     })
 
     it('should return false', () => {
@@ -44,11 +49,11 @@ describe('css-vendor', () => {
       expect(supportedValue('color', value)).to.be(value)
     })
 
-    it('should should prefix if needed', () => {
-      const value = supportedValue('display', 'flex')
-      if (value !== 'flex') {
-        expect(value).to.be(`${prefix.css}flex`)
-      }
+    it('should prefix if needed', function () {
+      const support = getSupport('flexbox')
+      if (!support.full) this.skip()
+      const value = support.needPrefix ? `${prefix.css}flex` : 'flex'
+      expect(supportedValue('display', 'flex')).to.be(value)
     })
 
     it('should return false for unknown value', () => {
