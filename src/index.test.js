@@ -5,6 +5,7 @@ import {getSupport, currentBrowser} from 'caniuse-support'
 
 import {prefix, supportedProperty, supportedValue} from './index'
 import propertyPrefixFixture from '../test/fixtures/property-prefix'
+import valueFixture from '../test/fixtures/value-prefix'
 
 const msg = `Detected browser: ${currentBrowser.id} ${currentBrowser.version}`
 console.log(msg) // eslint-disable-line no-console
@@ -49,6 +50,11 @@ describe('css-vendor', () => {
       const value = 'rgba(255, 255, 255, 1.0)'
       expect(supportedValue('color', value)).to.be(value)
     })
+
+    for (const testcase of valueFixture) {
+      it(`should prefix '${testcase[0]}: ${testcase[1]}' if needed [${currentBrowser.id} ${currentBrowser.version}]`,
+        () => expect(supportedValue(testcase[0], testcase[1])).to.eql(testcase[2]))
+    }
 
     it('should prefix if needed', function () {
       const {level, needPrefix} = getSupport('flexbox')
